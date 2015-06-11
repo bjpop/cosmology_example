@@ -35,23 +35,23 @@ Cosmology = namedtuple('Cosmology', [
 
 
 # This function needs a better name
-def E(red_shift, mass_density, dark_energy_density):
-    return np.sqrt(mass_density * (1.0 + red_shift) ** 3.0 + \
-        dark_energy_density * (1.0 + red_shift))
+def E(redshift, mass_density, dark_energy_density):
+    return np.sqrt(mass_density * (1.0 + redshift) ** 3.0 + \
+        dark_energy_density * (1.0 + redshift))
 
 
-def tage_integral(red_shift, mass_density, dark_energy_density):
+def tage_integral(redshift, mass_density, dark_energy_density):
     '''Compute the age of the universe'''
-    return 1.0 / ((1 + red_shift) * \
-        E(red_shift, mass_density, dark_energy_density))
+    return 1.0 / ((1.0 + redshift) * \
+        E(redshift, mass_density, dark_energy_density))
 
 
-def freidman_integral(red_shift, mass_density, dark_energy_density):
+def freidman_integral(redshift, mass_density, dark_energy_density):
     '''Compute the comoving distance'''
-    return 1.0 / E(red_shift, mass_density, dark_energy_density)
+    return 1.0 / E(redshift, mass_density, dark_energy_density)
 
 
-def cosmo(red_shift, hubble_constant=DEFAULT_HUBBLE_CONSTANT,
+def cosmo(redshift, hubble_constant=DEFAULT_HUBBLE_CONSTANT,
           mass_density=DEFAULT_MASS_DENSITY,
           dark_energy_density=DEFAULT_DARK_ENERGY_DENSITY):
     """
@@ -60,7 +60,7 @@ def cosmo(red_shift, hubble_constant=DEFAULT_HUBBLE_CONSTANT,
     with hubble_constant = 70, mass_density = 0.3, dark_energy_density = 0.7)
 
     Inputs:
-        red_shift: the redshift (z) at which to compute the cosmology.
+        redshift: the redshift (z) at which to compute the cosmology.
             Unfortunately because the integrator can't take arrays or lists
             this must be a number only.
         hubble_constant: Hubble's Constant (H0)
@@ -78,10 +78,6 @@ def cosmo(red_shift, hubble_constant=DEFAULT_HUBBLE_CONSTANT,
     # seconds in a julian year
     seconds_in_a_year = 31557600.0
 
-    # Assuming Omega_R is zero
-    # XXX this is not used anywhere
-    omega_k = 1.0 - mass_density - dark_energy_density
-
     # hubble distance
     hubble_distance = speed_of_light / hubble_constant
 
@@ -89,17 +85,17 @@ def cosmo(red_shift, hubble_constant=DEFAULT_HUBBLE_CONSTANT,
     # The stuff after the integral is all unit conversions
     age_at_redshift = 1.0 / hubble_constant * \
         integrate.quad(lambda r: tage_integral(r,  mass_density, dark_energy_density),
-        red_shift, np.inf)[0] * Mpc2km / (seconds_in_a_year) / (1.e9)
+        redshift, np.inf)[0] * Mpc2km / (seconds_in_a_year) / (1.e9)
 
     comoving_distance = hubble_distance * \
         integrate.quad(lambda r: freidman_integral(r,  mass_density, dark_energy_density),
-        0, red_shift)[0]
+        0, redshift)[0]
 	
     # The rest follows from the comoving distance
 
-    luminosity_distance = comoving_distance * (1.0 + red_shift)
+    luminosity_distance = comoving_distance * (1.0 + redshift)
 
-    angular_diameter_distance = comoving_distance / (1.0 + red_shift)
+    angular_diameter_distance = comoving_distance / (1.0 + redshift)
 
     return Cosmology(comoving_distance, luminosity_distance,
         angular_diameter_distance, age_at_redshift)
