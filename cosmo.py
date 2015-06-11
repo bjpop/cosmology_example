@@ -51,7 +51,7 @@ def freidman_integral(redshift, mass_density, dark_energy_density):
     return 1.0 / E(redshift, mass_density, dark_energy_density)
 
 
-def cosmo(redshift, hubble_constant=DEFAULT_HUBBLE_CONSTANT,
+def cosmo(redshift, hubble_constant,
           mass_density=DEFAULT_MASS_DENSITY,
           dark_energy_density=DEFAULT_DARK_ENERGY_DENSITY):
     """
@@ -68,7 +68,6 @@ def cosmo(redshift, hubble_constant=DEFAULT_HUBBLE_CONSTANT,
         dark_energy_density: Omega_Lambda. 
     Returns: a Cosmology object
     """
-
     # These are all constants which you want to very high accuracy
 
     # units of km
@@ -97,12 +96,11 @@ def cosmo(redshift, hubble_constant=DEFAULT_HUBBLE_CONSTANT,
 
     angular_diameter_distance = comoving_distance / (1.0 + redshift)
 
-    return Cosmology(comoving_distance, luminosity_distance,
-        angular_diameter_distance, age_at_redshift)
+    return comoving_distance, luminosity_distance, angular_diameter_distance, age_at_redshift
 
 
 # This function needs a better name
-def demo():
+def demo(arguments):
     # Array of log-spaced redshifts
     z_arr = np.logspace(-1, 4, 20)
     # Make an array of linearly-spaced redshifts
@@ -113,10 +111,11 @@ def demo():
     EdS_cosm = {'r':[], 'DL':[], 'DA':[], 'tage':[]}
 
     for z in z_arr:
-        conc = cosmo(z)
-        FE = cosmo(z, mass_density=0.0, dark_energy_density=1.0)
-        EdS = cosmo(z, mass_density=1.0, dark_energy_density=0.0)
+        conc = cosmo(z, arguments.hubble_const)
+        FE = cosmo(z, arguments.hubble_const, mass_density=0.0, dark_energy_density=1.0)
+        EdS = cosmo(z, arguments.hubble_const, mass_density=1.0, dark_energy_density=0.0)
 
+        # This only works cos we're lucky - choose between named tuple and dicts
         conc_cosm['r'].append(conc[0])
         conc_cosm['DL'].append(conc[1])
         conc_cosm['DA'].append(conc[2])
@@ -178,12 +177,14 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description='Cosmology example')
     parser.add_argument('--output', required=True, metavar='OUTPUT_FILE', \
         type=str, help='output file for plotted graphs') 
+    parser.add_argument('--hubble_const', required=False, metavar='HUBBLE_CONSTANT', \
+        type=float, help='The hubble constant, H_0, defaults to {}'.format(DEFAULT_HUBBLE_CONSTANT), default=DEFAULT_HUBBLE_CONSTANT) 
     return parser.parse_args()
 
 
 def main():
     arguments = parse_arguments()
-    z_arr, EdS_cosm, conc_cosm, FE_cosm = demo()
+    z_arr, EdS_cosm, conc_cosm, FE_cosm = demo(arguments)
     plot(arguments.output, z_arr, EdS_cosm, conc_cosm, FE_cosm)
 
 
