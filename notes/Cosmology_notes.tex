@@ -1,0 +1,119 @@
+\documentclass[]{article}
+
+\begin{document}
+
+\title{A Cosmology Calculator }
+\maketitle
+
+\noindent The propose of the program is to provide some of the more commonly used cosmological parameters, as a function of redshift. The parameters provided are the comoving distance, $r$, the luminosity distance, $D_\mathrm{L}$, the angular diameter distance $D_\mathrm{A}$ and the age of the universe at redshift $z$, $t_\mathrm{age}$. \\
+
+\noindent If you're in astro, this will be a program you will almost certainly use at some point. If you're not in astro, it will at least be a simple program for you to use to learn python. \\
+
+\noindent These notes are in no way intended to give you a full understanding of the parameters and their meaning, or derivation. They are sufficient to enable you to write a cosmology calculator, and no more. For a more thorough run down of the cosmology, and a full understanding of the derivation and significance of these parameters, I recommend Stuart Wyithe and Bart Pindor’s Cosmology Notes for the Masters Cosmology Course, in particular chapters 2 though to 10. \\
+
+\noindent I will explain each of the parameters in question below, but first I need to introduce the Friedman Equation and some other things.\\
+
+\noindent The metric used to describe the universe is called the Robertson-Walker Metric. An description of the features of this metric, and an explanation of why it is used is not included here. See the aforementioned Masters Cosmology notes for more information. The Friedman Model is a solution to the Robertson-Walker Metric, which can be derived from Einstein’s Equations.\\
+
+\noindent From the Friedman model one can obtain an expression for the time rate of change of the \itshape scale factor~\upshape, $a$
+\begin{equation}
+H = \frac{\dot a}{a}.
+\end{equation}
+The scale factor describes how big space is at time $t$. Computing the derivative in this equation yields
+\begin{equation}
+H(z)^2 = H_0^2[\Omega_\mathrm{m} a^{-3}+\Omega_\mathrm{R} a^{-4}+\Omega_\Lambda],
+\end{equation}
+\noindent where $\Omega_\mathrm{m}$ is the density of mass in the universe, $\Omega_\mathrm{R}$ is the density of radiation in the universe, and $\Omega_\Lambda$ is the dark energy density. This equation is called the Friedman Equation. Note that here and throughout this document $\Omega_\mathrm{R}$ is explicitly included for completeness, however in the calculator code (and in general in Astrophysics), it is assumed to be zero for all redshifts below $z\sim1000$. This is because it goes as $a^{-4}$ and $a$ goes to infinity at low redshifts, so the contribution from this term becomes negligible at smaller redshifts. The scale factor can be written in terms of the redshift, since light is being redshifted in space by the size of space changing
+\begin{equation}
+a = \frac{1}{(1+z)}.
+\end{equation}
+The Friedman equation gives the evolution of the Hubble parameter with redshift for a given \itshape cosmology~\upshape (here ‘cosmology’ refers to the choice of $\Omega_\mathrm{m}$, $\Omega_\mathrm{R}$ and $\Omega_\Lambda$). The Hubble \itshape constant\upshape , which you may be familiar with, doesn't take into account the evolution of the universe. It gives the expansion of the universe *today* at redshift 0. The way the expansion of the universe evolves with redshift is encapsulated by the terms in the square brackets in the Friedman equation above. \\
+
+\noindent Note that redshift doesn't get larger with time, it gets larger the further \itshape back~\upshape in time you go, and is zero now. In other words it is defined to be zero at the present, and to be infinite at the big bang. This makes sense when you think about what redshift means. Redshift gives the fractional shift in the wavelength of light emitted at some time in the past, relative to how we see it now. So it makes sense that something emitted now will have a redshift of 0 because it hasn't had its wavelength shifted at all. The further back you look (which is equivalent to saying the further away you look), the more the wavelength of the light has been stretched (i.e. redshifted) due to the expansion of the universe. \\
+
+\noindent A characteristic scale in cosmology is the \itshape Hubble distance~\upshape, $d_H$. This is the size of the observable universe at a given redshift,
+\begin{equation}
+d_H = \frac{c}{H(z)}.
+\end{equation}
+Another way of thinking of this is that the Hubble distance is the distance between the Earth and the galaxies which are currently receding from us at the speed of light (i.e. things which are just now becoming invisible to us because their light can never reach us). \\
+
+\noindent We now have what we need to get the comoving distance.
+
+\section{Comoving distance (or proper distance)}
+This is the distance to an object in \itshape comoving~\upshape coordinates. That is, this distance takes the expansion of the universe into account. \\
+
+\noindent The comoving distance is obtained by integrating the Hubble distance from the redshift in question to now (so from redshift $z$ to redshift 0)
+\begin{equation}
+r = \int_0^z d_H \mathrm{d}z,
+\end{equation}
+or expanding
+\begin{equation}
+r = \left(\frac{c}{H_0}\right)\int_0^z \frac{1}{[\Omega_\mathrm{m} a_{-3}+\Omega_\mathrm{R} a^{-4}+\Omega_\Lambda]}\mathrm{d}z.
+\end{equation}
+\section{Luminosity distance}
+
+As you no doubt know, flux falls off as radius squared. If you know the intrinsic brightness of something, this can be used measure the distance to it. In an expanding universe however, the amount of space for the light to propagate through is increasing, and so it’s no longer as simple as radius squared. \\
+
+\noindent The luminosity of an object observed at Earth, in terms of it’s emitted flux is 
+\begin{equation}
+L_\mathrm{obs} = L_\mathrm{em}a^2
+\end{equation}
+or
+\begin{equation}
+L_\mathrm{obs} = \frac{L_\mathrm{em}}{(1+z)^2},
+\end{equation}
+where one factor of $a$ is due to time dilation (photons lose energy…), and one is due to red shift (…and they arrive at a lower rate).\\
+
+\noindent The distance one would measure in a static universe is
+\begin{equation}
+d_\mathrm{L} = \sqrt{\frac{L_\mathrm{em}}{4\pi F_\mathrm{obs}}},
+\end{equation}
+and 
+\begin{equation}
+F_\mathrm{obs} = \frac{L_\mathrm{obs}}{4\pi r^2}.
+\end{equation}
+Combining these, one can write the luminosity distance in terms of redshift
+\begin{equation}
+D_\mathrm{L} = \frac{r}{a} = r (1+z)
+\end{equation}
+So you can see that once you have the comoving distance, getting the luminosity distance is trivial!
+
+\section{Angular diameter distance}
+This is the distance according to the angular size of an object on the sky, compared to some known size.\\ 
+
+\noindent When you look at a 30 cm ruler at a distance, it has a certain angular size, that is, it subtend some angle in your vision. For very distant objects which have a small angular size (like a galaxy in the night sky), you can use the \itshape small angle approximation~\upshape to relate the angular size of the object to the true size and the distance to the object
+\begin{equation}
+d \approx R \theta,
+\end{equation}
+where $\theta$ is the angular size of an object, $d$ is the true size of the object and $R$ is the distance to the object. If $d$ and $theta$ are known, then the distance to an object can be obtained using this relation. \\
+
+\noindent This is all assuming that the lines from the edges of the object to the observer are straight, so that you can use trigonometry in the normal way. But the way we determine the location of the edges of an object is from the light coming from it, and in an expanding universe these are no longer straight. \\
+
+\noindent If we consider two points separated by some apparent angular separation $\theta$, at a distance of $R$, the light from these two points will travel along curved null geodesics to reach us, and so the angle of incidence of the light will not the the same as the angle of emission. This is like the way lenses can create apparent images, because the alter the angle of incidence of the light rays from an image on our eyes. \\
+
+\noindent To account for this, we need to re-define the edges of the small angle triangle, and take the expansion of the universe into account. The apparent distance with expansion will be the comoving distance, multiplied by $a$, the scale factor. 
+\begin{equation}
+D_\mathrm{A} = r a = \frac{r}{1+z}
+\end{equation}
+This is the angular diameter distance. And as with the luminosity distance, getting the angular diameter distance is trivial, once you have the comoving distance. 
+
+\section{Age of the universe at redshift z}
+
+The age of the universe at a given redshift can be obtained by integrating up all the time between the beginning of the universe and the time at z. 
+\begin{equation}
+t_\mathrm{age} = \int_0^a(t_\mathrm{age}) \frac{\mathrm{d}t}{\mathrm{d}a^\prime} \mathrm{d}a^\prime.
+\end{equation}
+Now, as mentioned above, the Hubble parameter gives the time rate of change of the scale factor, $a$
+\begin{equation}
+H = \frac{\dot a}{a} = \frac{\mathrm{d}a}{\mathrm{d}t}\frac{1}{a}.
+\end{equation}
+Rearranging and substituting into the equation for $t_\mathrm{age}$ gives 
+\begin{equation}
+t_\mathrm{age} = \int_\infty^{z_\mathrm{age}} (1+z)^{-1} [\Omega_\mathrm{m} (1+z)^{3}+\Omega_\mathrm{R} (1+z)^{-4}+\Omega_\Lambda]^{1/2} \mathrm{d}z.
+\end{equation}
+
+\section{The code}
+
+
+
+\end{document}
