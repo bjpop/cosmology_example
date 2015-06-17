@@ -27,7 +27,7 @@ H(z)^2 = H_0^2[\Omega_\mathrm{m} a^{-3}+\Omega_\mathrm{R} a^{-4}+\Omega_\Lambda]
 \begin{equation}
 a = \frac{1}{(1+z)}.
 \end{equation}
-The Friedman equation gives the evolution of the Hubble parameter with redshift for a given \itshape cosmology~\upshape (here ‘cosmology’ refers to the choice of $\Omega_\mathrm{m}$, $\Omega_\mathrm{R}$ and $\Omega_\Lambda$). The Hubble \itshape constant\upshape , which you may be familiar with, doesn't take into account the evolution of the universe. It gives the expansion of the universe *today* at redshift 0. The way the expansion of the universe evolves with redshift is encapsulated by the terms in the square brackets in the Friedman equation above. \\
+The Friedman equation gives the evolution of the Hubble parameter with redshift for a given \itshape cosmology~\upshape (here ‘cosmology’ refers to the choice of $\Omega_\mathrm{m}$, $\Omega_\mathrm{R}$ and $\Omega_\Lambda$). The Hubble \itshape constant\upshape , which you may be familiar with, doesn't take into account the evolution of the universe. It gives the expansion of the universe \itshape today~\upshape at redshift 0. The way the expansion of the universe evolves with redshift is encapsulated by the terms in the square brackets in the Friedman equation above. 
 
 \noindent Note that redshift doesn't get larger with time, it gets larger the further \itshape back~\upshape in time you go, and is zero now. In other words it is defined to be zero at the present, and to be infinite at the big bang. This makes sense when you think about what redshift means. Redshift gives the fractional shift in the wavelength of light emitted at some time in the past, relative to how we see it now. So it makes sense that something emitted now will have a redshift of 0 because it hasn't had its wavelength shifted at all. The further back you look (which is equivalent to saying the further away you look), the more the wavelength of the light has been stretched (i.e. redshifted) due to the expansion of the universe. \\
 
@@ -81,7 +81,7 @@ So you can see that once you have the comoving distance, getting the luminosity 
 \section{Angular diameter distance}
 This is the distance according to the angular size of an object on the sky, compared to some known size.\\ 
 
-\noindent When you look at a 30 cm ruler at a distance, it has a certain angular size, that is, it subtend some angle in your vision. For very distant objects which have a small angular size (like a galaxy in the night sky), you can use the \itshape small angle approximation~\upshape to relate the angular size of the object to the true size and the distance to the object
+\noindent When you look at a 30 cm ruler at a distance, it has a certain angular size, that is, it subtends some angle in your vision. For very distant objects which have a small angular size (like a galaxy in the night sky), you can use the \itshape small angle approximation~\upshape to relate the angular size of the object to the true size and the distance to the object
 \begin{equation}
 d \approx R \theta,
 \end{equation}
@@ -89,13 +89,13 @@ where $\theta$ is the angular size of an object, $d$ is the true size of the obj
 
 \noindent This is all assuming that the lines from the edges of the object to the observer are straight, so that you can use trigonometry in the normal way. But the way we determine the location of the edges of an object is from the light coming from it, and in an expanding universe these are no longer straight. \\
 
-\noindent If we consider two points separated by some apparent angular separation $\theta$, at a distance of $R$, the light from these two points will travel along curved null geodesics to reach us, and so the angle of incidence of the light will not the the same as the angle of emission. This is like the way lenses can create apparent images, because the alter the angle of incidence of the light rays from an image on our eyes. \\
+\noindent If we consider two points separated by some apparent angular separation $\theta$, at a distance of $R$, the light from these two points will travel along curved null geodesics to reach us, and so the angle of incidence of the light will not the the same as the angle of emission. This is like the way lenses can create apparent images, because they alter the angle of incidence of the light rays from a source on our eyes. \\
 
 \noindent To account for this, we need to re-define the edges of the small angle triangle, and take the expansion of the universe into account. The apparent distance with expansion will be the comoving distance, multiplied by $a$, the scale factor. 
 \begin{equation}
 D_\mathrm{A} = r a = \frac{r}{1+z}
 \end{equation}
-This is the angular diameter distance. And as with the luminosity distance, getting the angular diameter distance is trivial, once you have the comoving distance. 
+This is the angular diameter distance, and as with the luminosity distance, getting the it is trivial once you have the comoving distance. 
 
 \section{Age of the universe at redshift z}
 
@@ -109,11 +109,41 @@ H = \frac{\dot a}{a} = \frac{\mathrm{d}a}{\mathrm{d}t}\frac{1}{a}.
 \end{equation}
 Rearranging and substituting into the equation for $t_\mathrm{age}$ gives 
 \begin{equation}
-t_\mathrm{age} = \int_\infty^{z_\mathrm{age}} (1+z)^{-1} [\Omega_\mathrm{m} (1+z)^{3}+\Omega_\mathrm{R} (1+z)^{-4}+\Omega_\Lambda]^{1/2} \mathrm{d}z.
+t_\mathrm{age} = \frac{1}{H_0}\int_\infty^{z_\mathrm{age}} (1+z)^{-1} [\Omega_\mathrm{m} (1+z)^{3}+\Omega_\mathrm{R} (1+z)^{-4}+\Omega_\Lambda]^{1/2} \mathrm{d}z.
+\label{eq:tage}
 \end{equation}
 
 \section{The code}
 
+You are required to write a program which will perform the following: 
+\begin{enumerate}
+
+\item Take as its input a redshift range, and optionally, values of $H_0$, $\Omega_\mathrm{m}$, and/or $\Omega_\mathrm{\Lambda}$ ($\Omega_\mathrm{R}$ is always $0$). To begin with you may want to just hard-code these values and change them in the code each time you want to run it for a different set of values. Once you have everything else working however you should change your code so these are taken as optional arguments in terminal (To do this you want to use the function \textsc{argparser} (Google it!). 
+\item Use the redshift range to generate a list or array of redshift values. To do this you will either want to use a \itshape list comprehension~\upshape, or a \textsc{numpy} array made with \textsc{numpy.range} or \textsc{numpy.linspace}. Again, Google these things to learn about them (including the list comprehension). 
+\item Compute the associated cosmological values for each redshift value. This will require performing two numerical integrals for each redshift value, one for the comoving distance, and one for the age of the universe at that redshift. To perform these integrals I recommend using either \textsc{scipy.integrate.quad} or \textsc{mpmath.quad}. Google them to learn about each, and use the one you like the look of! You will probably need to install the \textsc{mpmath} module to use that integrator. You almost certainly already have the \textsc{numpy} and \textsc{scipy} modules with your python installation. 
+\item Plot the results of your code for the range of z on a two-by-two set of axes. To do this you will use \textsc{matplotlib.pyplot} and its associated functions. The Matplotlib website has a extensive set of documentation which you can use to figure out how to do this. In particular, if you go to the Matplotlib Gallery (there's a link on the webpage), you can find examples similar to what you want to do, and copy/modify the source code of the example to suit your needs. \\
+\end{enumerate}
+
+\noindent The above list is peppered with instructions to google things. This is because this is $90\%$ of learning python. Any problem you have someone has had before, and they have asked the internet for help. So there's no point in reinventing the wheel - if you have a problem or want to know how to do something, Google it! The best places to look for help or learn how to use a function are the documentation on the module's website (Numpy, Scipy and Matplotlib all have excellent online documentation, as does the core python website), or StackOverflow, an online coding forum. 
+
+\begin{table}
+\caption{Required fundamental constants for writing the code}
+\centering
+\label{table:constants}
+\begin{tabular}{c c c}
+\\ [0.05ex]
+\hline
+\textbf{Constant} & \textbf{Value} & \textbf{Units} \\ [0.5ex]
+Speed of light, c & $2.99792458\times 10^5$ & km$\,$s$^{-1}$\\
+km in 1 Mpc & $3.08567758147\times 10^{19}$ & km\\
+Seconds in 1 year & $3.1557600\times 10^7$ & s\\
+\hline
+\end{tabular}
+\end{table}
+
+\noindent Achieving accurate values for your output requires very accurate input values of the known constants, most of which are hidden in the Hubble constant. In fact, the only units that appear in these calculations are in the Hubble constant, and the speed of light, $c$. The Hubble constant has units km$\,$s$^{-1}$Mpc, and you should use the speed of light in units of km$\,$s$^{-1}$. This will give you distances in units of Mpc. To get the correct value for the age of the universe in years, you need to convert the units of the Hubble constant to be yr$^{-1}$ for use in equation~(\ref{eq:tage}). You can do this by dividing by the number of km in $1$ Mpc and then dividing by the number of seconds in 1 year.  Table~\ref{table:constants} gives the values and units of all the constants required for the code. 
 
 
 \end{document}
+
+
