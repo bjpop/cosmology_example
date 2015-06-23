@@ -8,11 +8,7 @@ A simpler version of the course - compute less variables.
 '''
 
 import numpy as np
-import sys
-import mpmath
-import math
 import scipy.integrate as integrate
-from collections import namedtuple
 import matplotlib.pyplot as plt
 import argparse
 
@@ -21,7 +17,9 @@ DEFAULT_HUBBLE_CONSTANT = 70.0
 DEFAULT_MASS_DENSITY = 0.3
 DEFAULT_DARK_ENERGY_DENSITY = 0.7
 
-def Freidman_equation(redshift, mass_density, dark_energy_density):
+def freidman_equation(redshift, mass_density, dark_energy_density):
+    '''Return the *dimensionless* friedman equation
+    (i.e. without the H_0**2 term)'''
     return np.sqrt(mass_density * (1.0 + redshift) ** 3.0 + \
         dark_energy_density * (1.0 + redshift))
 
@@ -29,19 +27,19 @@ def Freidman_equation(redshift, mass_density, dark_energy_density):
 def tage_integral(redshift, mass_density, dark_energy_density):
     '''Compute the age of the universe'''
     return 1.0 / ((1.0 + redshift) * \
-        Freidman_equation(redshift, mass_density, dark_energy_density))
+        freidman_equation(redshift, mass_density, dark_energy_density))
 
 
 def freidman_integral(redshift, mass_density, dark_energy_density):
     '''Compute the comoving distance'''
-    return 1.0 / Freidman_equation(redshift, mass_density, dark_energy_density)
+    return 1.0 / freidman_equation(redshift, mass_density, dark_energy_density)
 
 
 def cosmo(redshift, hubble_constant,
           mass_density=DEFAULT_MASS_DENSITY,
           dark_energy_density=DEFAULT_DARK_ENERGY_DENSITY):
     """
-    A simple cosmology calculator. 
+    A simple cosmology calculator.
     Default is concordance cosmology (Flat, negative pressure, radiation free,
     with hubble_constant = 70, mass_density = 0.3, dark_energy_density = 0.7)
 
@@ -51,14 +49,14 @@ def cosmo(redshift, hubble_constant,
             this must be a number only.
         hubble_constant: Hubble's Constant (H0)
         mass_density: Omega_M
-        dark_energy_density: Omega_Lambda. 
+        dark_energy_density: Omega_Lambda.
     Returns: a Cosmology object
     """
     # These are all constants which you want to very high accuracy
 
     # units of km
     speed_of_light = 2.99792458e5
-    # converts Mpc to km 
+    # converts Mpc to km
     Mpc2km = 3.08567758147e+19
     # seconds in a julian year
     seconds_in_a_year = 31557600.0
@@ -69,13 +67,13 @@ def cosmo(redshift, hubble_constant,
     # Age at redshift in gigayears
     # The stuff after the integral is all unit conversions
     age_at_redshift = 1.0 / hubble_constant * \
-        integrate.quad(lambda r: tage_integral(r,  mass_density, dark_energy_density),
+        integrate.quad(lambda r: tage_integral(r, mass_density, dark_energy_density),
         redshift, np.inf)[0] * Mpc2km / (seconds_in_a_year) / (1.e9)
 
     comoving_distance = hubble_distance * \
-        integrate.quad(lambda r: freidman_integral(r,  mass_density, dark_energy_density),
+        integrate.quad(lambda r: freidman_integral(r, mass_density, dark_energy_density),
         0, redshift)[0]
-	
+
     # The rest follows from the comoving distance
 
     luminosity_distance = comoving_distance * (1.0 + redshift)
@@ -86,6 +84,15 @@ def cosmo(redshift, hubble_constant,
 
 
 def compute_cosmologies(arguments):
+    '''Takes arguments from the argparser and uses them to
+    1) generate an array of redshifts
+    2) define a set of dictionaries to store the resulting cosmologies,
+       containing empty lists
+    3) for each cosmology, for each redshift, compute the cosmology
+    4) append the resulting information into the relevant entry
+       in the relevant dictionary
+    5) return a list containing the array of redshifts,
+       and a list of the dictionaries of cosmologies.'''
     # Array of log-spaced redshifts
     z_lower, z_upper, num_pts = arguments.redshift_range
     z_arr = np.logspace(z_lower, z_upper, num_pts)
@@ -99,7 +106,7 @@ def compute_cosmologies(arguments):
 
     for z in z_arr:
         conc = cosmo(z, arguments.hubble_const)
-        user = cosmo(z, arguments.hubble_const,mass_density=arguments.omega_m, dark_energy_density=arguments.omega_L)
+        user = cosmo(z, arguments.hubble_const, mass_density=arguments.omega_m, dark_energy_density=arguments.omega_L)
         FE = cosmo(z, arguments.hubble_const, mass_density=0.0, dark_energy_density=1.0)
         EdS = cosmo(z, arguments.hubble_const, mass_density=1.0, dark_energy_density=0.0)
 
@@ -110,7 +117,7 @@ def compute_cosmologies(arguments):
         user_cosm['r'].append(user[0])
         user_cosm['DL'].append(user[1])
         user_cosm['DA'].append(user[2])
-        user_cosm['tage'].append(user[3])        
+        user_cosm['tage'].append(user[3])
         FE_cosm['r'].append(FE[0])
         FE_cosm['DL'].append(FE[1])
         FE_cosm['DA'].append(FE[2])
@@ -120,10 +127,13 @@ def compute_cosmologies(arguments):
         EdS_cosm['DA'].append(EdS[2])
         EdS_cosm['tage'].append(EdS[3])
 
-    return z_arr, conc_cosm, user_cosm, EdS_cosm, FE_cosm
+    return z_arr, [conc_cosm, user_cosm, EdS_cosm, FE_cosm]
 
 
-def plot_cosmology(output_filename, z_arr, conc_cosm, user_cosm, EdS_cosm, FE_cosm):
+def plot_cosmology(output_filename, z_arr, cosmologies):
+    ''' Plots the four parameters for each of the cosmologies
+        on a 2x2 plot. '''
+    conc_cosm, user_cosm, EdS_cosm, FE_cosm = cosmologies
     plt.close()
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(24, 18))
 
@@ -134,15 +144,15 @@ def plot_cosmology(output_filename, z_arr, conc_cosm, user_cosm, EdS_cosm, FE_co
     ax1.set_yscale('log')
     ax1.set_xscale('log')
     ax1.set_title('Comoving distance')
-    
+
     ax2.plot(z_arr, EdS_cosm['DA'], color='g', linewidth=3)
     ax2.plot(z_arr, conc_cosm['DA'], color='r', linewidth=3)
     ax2.plot(z_arr, user_cosm['DA'], color='m', linewidth=3)
-    ax2.plot(z_arr, FE_cosm['DA'], color = 'b', linewidth=3)
+    ax2.plot(z_arr, FE_cosm['DA'], color='b', linewidth=3)
     ax2.set_yscale('log')
     ax2.set_xscale('log')
     ax2.set_title('Angular diameter distance')
-    
+
     ax3.plot(z_arr, EdS_cosm['tage'], color='g', linewidth=3)
     ax3.plot(z_arr, conc_cosm['tage'], color='r', linewidth=3)
     ax3.plot(z_arr, user_cosm['tage'], color='m', linewidth=3)
@@ -151,17 +161,17 @@ def plot_cosmology(output_filename, z_arr, conc_cosm, user_cosm, EdS_cosm, FE_co
     ax3.set_xscale('log')
     ax3.set_ylim(ax3.get_ylim()[0], 1e4)
     ax3.set_title('Age at z')
-    
+
     ax4.plot(z_arr, EdS_cosm['DL'], color='g', linewidth=3)
-    ax4.plot(z_arr, conc_cosm['DL'], color = 'r', linewidth=3)
-    ax4.plot(z_arr, user_cosm['DL'], color = 'm', linewidth=3)
+    ax4.plot(z_arr, conc_cosm['DL'], color='r', linewidth=3)
+    ax4.plot(z_arr, user_cosm['DL'], color='m', linewidth=3)
     ax4.plot(z_arr, FE_cosm['DL'], color='b', linewidth=3)
     ax4.set_yscale('log')
     ax4.set_xscale('log')
     ax4.set_title('Luminosity distance')
-    
+
     ax1.legend(fontsize=25, loc=2)
-    
+
     plt.tight_layout()
     plt.savefig(output_filename)
 
@@ -173,38 +183,40 @@ def parse_arguments():
                         required=True, \
                         metavar='OUTPUT_PLOT_NAME', \
                         type=str, \
-                        help='name of output file for plotted graphs') 
+                        help='name of output file for plotted graphs')
     parser.add_argument('--redshift_range', \
                         required=False, \
                         metavar='REDSHIFT_RNG', \
                         type=float, \
                         help='A list containing the range of redshifts (log-spaced) and the number of points, defaults to {}'.format(DEFAULT_REDSHIFT_RNG),\
-                        default=DEFAULT_REDSHIFT_RNG) 
+                        default=DEFAULT_REDSHIFT_RNG)
     parser.add_argument('--hubble_const', \
                         required=False, \
                         metavar='HUBBLE_CONSTANT', \
                         type=float, \
                         help='The hubble constant, H_0, defaults to {}'.format(DEFAULT_HUBBLE_CONSTANT), \
-                        default=DEFAULT_HUBBLE_CONSTANT) 
+                        default=DEFAULT_HUBBLE_CONSTANT)
     parser.add_argument('--omega_m', \
                         required=False, \
                         metavar='OMEGA_M', \
                         type=float, \
                         help='Mass density, Omeaga_m, defaults to {}'.format(DEFAULT_MASS_DENSITY), \
-                        default=DEFAULT_MASS_DENSITY) 
+                        default=DEFAULT_MASS_DENSITY)
     parser.add_argument('--omega_L', \
                         required=False, \
                         metavar='OMEGA_L', \
                         type=float, \
                         help='Dark energy density, Omeaga_L, defaults to {}'.format(DEFAULT_DARK_ENERGY_DENSITY), \
-                        default=DEFAULT_DARK_ENERGY_DENSITY) 
+                        default=DEFAULT_DARK_ENERGY_DENSITY)
     return parser.parse_args()
 
 
 def main():
+    '''This is a special function name. Everything in your code should
+        run inside main()'''
     arguments = parse_arguments()
-    z_arr, conc_cosm, user_cosm, EdS_cosm, FE_cosm = compute_cosmologies(arguments)
-    plot_cosmology(arguments.plot_name, z_arr, conc_cosm, user_cosm, EdS_cosm, FE_cosm)
+    z_arr, cosmologies = compute_cosmologies(arguments)
+    plot_cosmology(arguments.plot_name, z_arr, cosmologies)
 
 
 if __name__ == '__main__':
