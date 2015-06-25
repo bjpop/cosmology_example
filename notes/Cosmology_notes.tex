@@ -1,4 +1,5 @@
 \documentclass[]{article}
+\usepackage{amsmath}
 
 \begin{document}
 
@@ -9,7 +10,7 @@
 
 \noindent If you're in astro, this will be a program you will almost certainly use at some point. If you're not in astro, it will at least be a simple program for you to use to learn python. \\
 
-\noindent These notes are in no way intended to give you a full understanding of the parameters and their meaning, or derivation. They are sufficient to enable you to write a cosmology calculator, and no more. For a more thorough run down of the cosmology, and a full understanding of the derivation and significance of these parameters, I recommend Stuart Wyithe and Bart Pindor’s Cosmology Notes for the Masters Cosmology Course, in particular chapters 2 though to 10. \\
+\noindent These notes are in no way intended to give you a full understanding of the parameters and their meaning, or derivation. They give a general introduction to the theory for those interested, and provide the maths you need to write a cosmology calculator. If you are not interested in the theory, it is entirely possible to just use the maths in boxes in these notes to write the code, without even understanding it. If you are interested however you can read the notes to understand what you are computing. For a more thorough run down of the cosmology, and a full understanding of the derivation and significance of these parameters, I recommend Stuart Wyithe and Bart Pindor’s Cosmology Notes for the Masters Cosmology Course, in particular chapters 2 though to 10. \\
 
 \noindent I will explain each of the parameters in question below, but first I need to introduce the Friedman Equation and some other things.\\
 
@@ -44,11 +45,11 @@ This is the distance to an object in \itshape comoving~\upshape coordinates. Tha
 
 \noindent The comoving distance is obtained by integrating the Hubble distance from the redshift in question to now (so from redshift $z$ to redshift 0)
 \begin{equation}
-r = \int_0^z d_H \mathrm{d}z,
+r_\mathrm{com} = \int_0^z d_H \mathrm{d}z,
 \end{equation}
 or expanding
 \begin{equation}
-r = \left(\frac{c}{H_0}\right)\int_0^z \frac{1}{[\Omega_\mathrm{m} a_{-3}+\Omega_\mathrm{R} a^{-4}+\Omega_\Lambda]}\mathrm{d}z.
+\boxed{r_\mathrm{com} = \left(\frac{c}{H_0}\right)\int_0^z \frac{1}{[\Omega_\mathrm{m} (1+z)^{3}+\Omega_\mathrm{R} (1+z)^{4}+\Omega_\Lambda]}\mathrm{d}z}
 \end{equation}
 \section{Luminosity distance}
 
@@ -74,7 +75,7 @@ F_\mathrm{obs} = \frac{L_\mathrm{obs}}{4\pi r^2}.
 \end{equation}
 Combining these, one can write the luminosity distance in terms of redshift
 \begin{equation}
-D_\mathrm{L} = \frac{r}{a} = r (1+z)
+\boxed{D_\mathrm{L} = \frac{r_\mathrm{com}}{a} = r_\mathrm{com} (1+z)}
 \end{equation}
 So you can see that once you have the comoving distance, getting the luminosity distance is trivial!
 
@@ -93,7 +94,7 @@ where $\theta$ is the angular size of an object, $d$ is the true size of the obj
 
 \noindent To account for this, we need to re-define the edges of the small angle triangle, and take the expansion of the universe into account. The apparent distance with expansion will be the comoving distance, multiplied by $a$, the scale factor. 
 \begin{equation}
-D_\mathrm{A} = r a = \frac{r}{1+z}
+\boxed{D_\mathrm{A} = r_\mathrm{com} a = \frac{r_\mathrm{com}}{1+z}}
 \end{equation}
 This is the angular diameter distance, and as with the luminosity distance, getting the it is trivial once you have the comoving distance. 
 
@@ -109,7 +110,7 @@ H = \frac{\dot a}{a} = \frac{\mathrm{d}a}{\mathrm{d}t}\frac{1}{a}.
 \end{equation}
 Rearranging and substituting into the equation for $t_\mathrm{age}$ gives 
 \begin{equation}
-t_\mathrm{age} = \frac{1}{H_0}\int_\infty^{z_\mathrm{age}} (1+z)^{-1} [\Omega_\mathrm{m} (1+z)^{3}+\Omega_\mathrm{R} (1+z)^{-4}+\Omega_\Lambda]^{1/2} \mathrm{d}z.
+\boxed{t_\mathrm{age} = \frac{1}{H_0}\int_\infty^{z_\mathrm{age}} (1+z)^{-1} [\Omega_\mathrm{m} (1+z)^{3}+\Omega_\mathrm{R} (1+z)^{-4}+\Omega_\Lambda]^{1/2} \mathrm{d}z}
 \label{eq:tage}
 \end{equation}
 
@@ -124,7 +125,7 @@ You are required to write a program which will perform the following:
 \item Plot the results of your code for the range of z on a two-by-two set of axes. To do this you will use \textsc{matplotlib.pyplot} and its associated functions. The Matplotlib website has a extensive set of documentation which you can use to figure out how to do this. In particular, if you go to the Matplotlib Gallery (there's a link on the webpage), you can find examples similar to what you want to do, and copy/modify the source code of the example to suit your needs. \\
 \end{enumerate}
 
-\noindent The above list is peppered with instructions to google things. This is because this is $90\%$ of learning python. Any problem you have someone has had before, and they have asked the internet for help. So there's no point in reinventing the wheel - if you have a problem or want to know how to do something, Google it! The best places to look for help or learn how to use a function are the documentation on the module's website (Numpy, Scipy and Matplotlib all have excellent online documentation, as does the core python website), or StackOverflow, an online coding forum. 
+\noindent The above list is peppered with instructions to google things. This is because this is $90\%$ of learning python. Any problem you have someone has had before, and they have asked the internet for help. So there's no point in reinventing the wheel - if you have a problem or want to know how to do something, Google it! The best places to look for help or learn how to use a function are the documentation on the module's website (Numpy, Scipy and Matplotlib all have excellent online documentation, as does the core python website), or StackOverflow, an online coding forum. \\
 
 \begin{table}
 \caption{Required fundamental constants for writing the code}
