@@ -12,6 +12,7 @@ import scipy.integrate as integrate
 import matplotlib.pyplot as plt
 import argparse
 
+# Define the deafult values for the argument parser
 DEFAULT_REDSHIFT_RNG = [-1.0, 4.0, 20]
 DEFAULT_HUBBLE_CONSTANT = 70.0
 DEFAULT_MASS_DENSITY = 0.3
@@ -99,17 +100,21 @@ def compute_cosmologies(arguments):
     # Make an array of linearly-spaced redshifts
     # z = np.linspace(0.01, 1000, 20)
 
+    # Initialise the dictionaries
     conc_cosm = {'r':[], 'DL':[], 'DA':[], 'tage':[]}
     user_cosm = {'r':[], 'DL':[], 'DA':[], 'tage':[]}
     FE_cosm = {'r':[], 'DL':[], 'DA':[], 'tage':[]}
     EdS_cosm = {'r':[], 'DL':[], 'DA':[], 'tage':[]}
 
     for z in z_arr:
+        # Call the cosmology function for different scenarios
         conc = cosmo(z, arguments.hubble_const)
-        user = cosmo(z, arguments.hubble_const, mass_density=arguments.omega_m, dark_energy_density=arguments.omega_L)
+        user = cosmo(z, arguments.hubble_const, mass_density=arguments.omega_m, 
+                                            dark_energy_density=arguments.omega_L)
         FE = cosmo(z, arguments.hubble_const, mass_density=0.0, dark_energy_density=1.0)
         EdS = cosmo(z, arguments.hubble_const, mass_density=1.0, dark_energy_density=0.0)
 
+        # Put the results into dictionaries
         conc_cosm['r'].append(conc[0])
         conc_cosm['DL'].append(conc[1])
         conc_cosm['DA'].append(conc[2])
@@ -127,23 +132,28 @@ def compute_cosmologies(arguments):
         EdS_cosm['DA'].append(EdS[2])
         EdS_cosm['tage'].append(EdS[3])
 
+    # Putting everything after z_arr in square brackets means they 
+    # will be returned as one list. 
     return z_arr, [conc_cosm, user_cosm, EdS_cosm, FE_cosm]
 
 
 def plot_cosmology(output_filename, z_arr, cosmologies):
     ''' Plots the four parameters for each of the cosmologies
         on a 2x2 plot. '''
+    # Unpack the cosmologies
     conc_cosm, user_cosm, EdS_cosm, FE_cosm = cosmologies
     plt.close()
+    # Create the figure instances in a 4x4 plot
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(24, 18))
 
+    # Plot onto the top left axis. 'label' is what is used to make the legend.
     ax1.plot(z_arr, EdS_cosm['r'], color='g', linewidth=3, label='Flat Empty')
     ax1.plot(z_arr, conc_cosm['r'], color='r', linewidth=3, label='Concordance')
     ax1.plot(z_arr, user_cosm['r'], color='m', linewidth=3, label='User Specified')
     ax1.plot(z_arr, FE_cosm['r'], color='b', linewidth=3, label='Einstein de Sitter')
-    ax1.set_yscale('log')
+    ax1.set_yscale('log') # Make the plots logscale
     ax1.set_xscale('log')
-    ax1.set_title('Comoving distance')
+    ax1.set_title('Comoving distance') # Save the plots
 
     ax2.plot(z_arr, EdS_cosm['DA'], color='g', linewidth=3)
     ax2.plot(z_arr, conc_cosm['DA'], color='r', linewidth=3)
@@ -170,44 +180,67 @@ def plot_cosmology(output_filename, z_arr, cosmologies):
     ax4.set_xscale('log')
     ax4.set_title('Luminosity distance')
 
+    # Make the legend on the top left axis
     ax1.legend(fontsize=25, loc=2)
 
+    # Tidy up the layout
     plt.tight_layout()
+    # Save the fig
     plt.savefig(output_filename)
 
 
 def parse_arguments():
     '''Parse the command line arguments of the program'''
+    
     parser = argparse.ArgumentParser(description='Cosmology example')
-    parser.add_argument('--plot_name', \
-                        required=True, \
-                        metavar='OUTPUT_PLOT_NAME', \
-                        type=str, \
-                        help='name of output file for plotted graphs')
-    parser.add_argument('--redshift_range', \
-                        required=False, \
-                        metavar='REDSHIFT_RNG', \
-                        type=float, \
-                        help='A list containing the range of redshifts (log-spaced) and the number of points, defaults to {}'.format(DEFAULT_REDSHIFT_RNG),\
-                        default=DEFAULT_REDSHIFT_RNG)
-    parser.add_argument('--hubble_const', \
-                        required=False, \
-                        metavar='HUBBLE_CONSTANT', \
-                        type=float, \
-                        help='The hubble constant, H_0, defaults to {}'.format(DEFAULT_HUBBLE_CONSTANT), \
-                        default=DEFAULT_HUBBLE_CONSTANT)
-    parser.add_argument('--omega_m', \
-                        required=False, \
-                        metavar='OMEGA_M', \
-                        type=float, \
-                        help='Mass density, Omeaga_m, defaults to {}'.format(DEFAULT_MASS_DENSITY), \
-                        default=DEFAULT_MASS_DENSITY)
-    parser.add_argument('--omega_L', \
-                        required=False, \
-                        metavar='OMEGA_L', \
-                        type=float, \
-                        help='Dark energy density, Omeaga_L, defaults to {}'.format(DEFAULT_DARK_ENERGY_DENSITY), \
-                        default=DEFAULT_DARK_ENERGY_DENSITY)
+    
+    parser.add_argument(
+        '--plot_name', # The name of the input variable
+        required=True, # Is it an optional variable?
+        metavar='OUTPUT_PLOT_NAME', # For errormessage printing purposes
+        type=str, # The datatype of the input variable
+        # A description of the variable or error message purposes
+        help='name of output file for plotted graphs'
+        )
+
+    parser.add_argument(
+        '--redshift_range',
+        required=False,
+        metavar='REDSHIFT_RNG',
+        type=float,
+        help='A list containing the range of redshifts (log-spaced) and the number of points, defaults to {}'.format(DEFAULT_REDSHIFT_RNG),
+        # If the variable is optional, this is the default value
+        # (defined at the top of the code)
+        default=DEFAULT_REDSHIFT_RNG
+        )
+    
+    parser.add_argument(
+        '--hubble_const',
+        required=False,
+        metavar='HUBBLE_CONSTANT',
+        type=float,
+        help='The hubble constant, H_0, defaults to {}'.format(DEFAULT_HUBBLE_CONSTANT),
+        default=DEFAULT_HUBBLE_CONSTANT
+        )
+
+    parser.add_argument(
+        '--omega_m',
+        required=False,
+        metavar='OMEGA_M',
+        type=float,
+        help='Mass density, Omeaga_m, defaults to {}'.format(DEFAULT_MASS_DENSITY),
+        default=DEFAULT_MASS_DENSITY
+        )
+
+    parser.add_argument(
+        '--omega_L',
+        required=False,
+        metavar='OMEGA_L',
+        type=float,
+        help='Dark energy density, Omeaga_L, defaults to {}'.format(DEFAULT_DARK_ENERGY_DENSITY),
+        default=DEFAULT_DARK_ENERGY_DENSITY
+        )
+
     return parser.parse_args()
 
 
