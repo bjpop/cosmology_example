@@ -68,11 +68,12 @@ def sort_tups(data):
     tuple entry.
     Returns a list of tups.
     '''
-    sorted_tup = sorted(data, key=lambda tup: tup[0])
+    sorted_tup = sorted(data, key=lambda tup: tup)
+
     return sorted_tup
 
 
-def f_sum_arr(x0, x1, xi=1.0):
+def sum_arr(x0, x1, xi=1.0):
     '''
     A function to sum from x0, with x1 steps of size
     xi, keeping the result for each succesive step.
@@ -111,7 +112,7 @@ def factorial(x):
     y = x
 
     while i < y:
-        x *= (i)
+        x *= i
         i += 1
 
     return x
@@ -160,7 +161,7 @@ def main():
     run inside main()
     '''
 
-    sumtest_arr = f_sum_arr(5, 10, xi=1.5)
+    sumtest_arr = sum_arr(5, 10, xi=1.5)
     print 'sumtest_arr', sumtest_arr
     x_mod_z = modulus(100, 12)
     print 'x_mod_z', x_mod_z
