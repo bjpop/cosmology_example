@@ -7,6 +7,8 @@ Catherine O. de Burgh-Day and Jaehong Park, 2014.
 A simpler version of the course - compute less variables.
 '''
 
+import matplotlib
+matplotlib.use('Agg')
 import numpy as np
 import scipy.integrate as integrate
 import matplotlib.pyplot as plt
@@ -142,6 +144,15 @@ def plot_cosmology(output_filename, z_arr, cosmologies):
         on a 2x2 plot. '''
     # Unpack the cosmologies
     conc_cosm, user_cosm, EdS_cosm, FE_cosm = cosmologies
+
+    # set the tick label and axis label size for all plots
+    # ** This won't work if you use Ipython becasue rcPramas gets 
+    # imported when you use matplotlib the first time only in Ipython.
+    # You'll need to re-open Ipython every time you chage these **
+    matplotlib.rcParams['axes.labelsize'] = 30
+    matplotlib.rcParams['xtick.labelsize'] = 30
+    matplotlib.rcParams['ytick.labelsize'] = 30
+    
     plt.close()
     # Create the figure instances in a 4x4 plot
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(24, 18))
@@ -153,7 +164,10 @@ def plot_cosmology(output_filename, z_arr, cosmologies):
     ax1.plot(z_arr, FE_cosm['r'], color='b', linewidth=3, label='Einstein de Sitter')
     ax1.set_yscale('log') # Make the plots logscale
     ax1.set_xscale('log')
-    ax1.set_title('Comoving distance') # Save the plots
+    ax1.set_ylabel('Comoving distance (Mpc)')
+    ax1.set_xlabel('Redshift, z')
+    # increase the space between the y axis ticklabels and the axis label
+    ax1.yaxis.labelpad = 20
 
     ax2.plot(z_arr, EdS_cosm['DA'], color='g', linewidth=3)
     ax2.plot(z_arr, conc_cosm['DA'], color='r', linewidth=3)
@@ -161,7 +175,9 @@ def plot_cosmology(output_filename, z_arr, cosmologies):
     ax2.plot(z_arr, FE_cosm['DA'], color='b', linewidth=3)
     ax2.set_yscale('log')
     ax2.set_xscale('log')
-    ax2.set_title('Angular diameter distance')
+    ax2.set_ylabel('Angular diameter distance (Mpc)')
+    ax2.set_xlabel('Redshift, z')
+    ax2.yaxis.labelpad = 20
 
     ax3.plot(z_arr, EdS_cosm['tage'], color='g', linewidth=3)
     ax3.plot(z_arr, conc_cosm['tage'], color='r', linewidth=3)
@@ -170,7 +186,9 @@ def plot_cosmology(output_filename, z_arr, cosmologies):
     ax3.set_yscale('log')
     ax3.set_xscale('log')
     ax3.set_ylim(ax3.get_ylim()[0], 1e4)
-    ax3.set_title('Age at z')
+    ax3.set_ylabel('Age at redshift z (Gyr)')
+    ax3.set_xlabel('Redshift, z')
+    ax3.yaxis.labelpad = 20
 
     ax4.plot(z_arr, EdS_cosm['DL'], color='g', linewidth=3)
     ax4.plot(z_arr, conc_cosm['DL'], color='r', linewidth=3)
@@ -178,13 +196,15 @@ def plot_cosmology(output_filename, z_arr, cosmologies):
     ax4.plot(z_arr, FE_cosm['DL'], color='b', linewidth=3)
     ax4.set_yscale('log')
     ax4.set_xscale('log')
-    ax4.set_title('Luminosity distance')
+    ax4.set_ylabel('Luminosity distance (Mpc)')
+    ax4.set_xlabel('Redshift, z')
+    ax4.yaxis.labelpad = 20
 
     # Make the legend on the top left axis
     ax1.legend(fontsize=25, loc=2)
 
     # Tidy up the layout
-    plt.tight_layout()
+    plt.tight_layout(rect = (0.,0,1.,0.9))
     # Save the fig
     plt.savefig(output_filename)
 
@@ -208,6 +228,7 @@ def parse_arguments():
         required=False,
         metavar='REDSHIFT_RNG',
         type=float,
+        nargs='+',
         help='A list containing the range of redshifts (log-spaced) and the number of points, defaults to {}'.format(DEFAULT_REDSHIFT_RNG),
         # If the variable is optional, this is the default value
         # (defined at the top of the code)
@@ -248,7 +269,12 @@ def main():
     '''This is a special function name. Everything in your code should
         run inside main()'''
     arguments = parse_arguments()
+    print 'Computing cosmology for:'
+    print 'H_0 = %s, Omega_M = %s, Omega_L = %s' \
+           % (arguments.hubble_const, arguments.omega_m, arguments.omega_L)
     z_arr, cosmologies = compute_cosmologies(arguments)
+    print 'Plotting results, along with some common cosmologies.'
+    print "Saving to: '%s'" % (arguments.plot_name)
     plot_cosmology(arguments.plot_name, z_arr, cosmologies)
 
 
