@@ -31,7 +31,7 @@
 \title{A Cosmology Calculator }
 \maketitle
 
-\noindent The propose of the program is to provide some of the more commonly used cosmological parameters, as a function of redshift. The parameters provided are the comoving distance, $r$, the luminosity distance, $D_\mathrm{L}$, the angular diameter distance $D_\mathrm{A}$ and the age of the universe at redshift $z$, $t_\mathrm{age}$. \\
+\noindent The propose of the program is to compute some of the more commonly used cosmological parameters, as a function of redshift. The parameters to compute are the proper distance, $r$, the luminosity distance, $D_\mathrm{L}$, the angular diameter distance $D_\mathrm{A}$ and the age of the universe at redshift $z$, $t_\mathrm{age}$. \\
 
 \noindent If you're in astro, this will be a program you will almost certainly use at some point. If you're not in astro, it will at least be a simple program for you to use to learn python. \\
 
@@ -51,7 +51,7 @@ The scale factor describes how big space is at time $t$. Computing the derivativ
 \begin{equation}
 H(z)^2 = H_0^2[\Omega_\mathrm{m} a^{-3}+\Omega_\mathrm{R} a^{-4}+\Omega_\Lambda],
 \end{equation}
-\noindent where $\Omega_\mathrm{m}$ is the density of mass in the universe, $\Omega_\mathrm{R}$ is the density of radiation in the universe, and $\Omega_\Lambda$ is the dark energy density. This equation is called the Friedman Equation. Note that here and throughout this document $\Omega_\mathrm{R}$ is explicitly included for completeness, however in the calculator code (and in general in Astrophysics), it is assumed to be zero for all redshifts below $z\sim1000$. This is because it goes as $a^{-4}$ and $a$ goes to infinity at low redshifts, so the contribution from this term becomes negligible at smaller redshifts. The scale factor can be written in terms of the redshift, since light is being redshifted in space by the size of space changing
+\noindent where $\Omega_\mathrm{m}$ is the density of mass in the universe, $\Omega_\mathrm{R}$ is the density of radiation in the universe, and $\Omega_\Lambda$ is the dark energy density. This equation is called the Friedman Equation. Note that here and throughout this document $\Omega_\mathrm{R}$ is explicitly included for completeness, however in the calculator code (and in general in Astrophysics), it is assumed to be zero for all redshifts below $z\sim1000$. This is because it goes as $a^{-4}$ and $a$ goes to 1 at low redshifts, so the contribution from this term becomes negligible at smaller redshifts. The scale factor can be written in terms of the redshift, since light is being redshifted in space by the size of space changing
 \begin{equation}
 a = \frac{1}{(1+z)}.
 \end{equation}
@@ -65,13 +65,13 @@ d_H = \frac{c}{H(z)}.
 \end{equation}
 Another way of thinking of this is that the Hubble distance is the distance between the Earth and the galaxies which are currently receding from us at the speed of light (i.e. things which are just now becoming invisible to us because their light can never reach us). \\
 
-\noindent We now have what we need to get the comoving distance.
+\noindent We now have what we need to get the proper distance.
 
-\subsection{Comoving distance (or proper distance)}
+\subsection{Proper distance}
 
-This is the distance to an object in \itshape comoving~\upshape coordinates. That is, this distance takes the expansion of the universe into account. \\
+This is the distance to an object in \itshape proper~\upshape coordinates. That is, this distance takes the expansion of the universe into account. \\
 
-\noindent The comoving distance is obtained by integrating the Hubble distance from the redshift in question to now (so from redshift $z$ to redshift 0)
+\noindent The proper distance is obtained by integrating the Hubble distance from the redshift in question to now (so from redshift $z$ to redshift 0)
 \begin{equation}
 r_\mathrm{com} = \int_0^z d_H \mathrm{d}z,
 \end{equation}
@@ -85,7 +85,7 @@ r_\mathrm{com} &= c\int_0^z \frac{1}{H(z)}\mathrm{d}z\\
 }
 \end{equation}\\
 
-\noindent A diagram of the comoving distance is shown in the first panel of Figure~\ref{fig:distances}.
+\noindent A diagram of the proper distance is shown in the first panel of Figure~\ref{fig:distances}.
 
 \subsection{Luminosity distance}
 
@@ -113,7 +113,7 @@ Combining these, one can write the luminosity distance in terms of redshift
 \begin{equation}
 \boxed{D_\mathrm{L} = \frac{r_\mathrm{com}}{a} = r_\mathrm{com} (1+z)}
 \end{equation}
-So you can see that once you have the comoving distance, getting the luminosity distance is trivial! \\
+So you can see that once you have the proper distance, getting the luminosity distance is trivial! \\
 
 \noindent A diagram of the luminosity distance is shown in the second panel of Figure~\ref{fig:distances}.
 
@@ -130,18 +130,18 @@ where $\theta$ is the angular size of an object, $d$ is the true size of the obj
 
 \noindent If we consider two points separated by some apparent angular separation $\theta$, at a distance of $R$, the light from these two points will travel along curved null geodesics to reach us, and so the angle of incidence of the light will not the the same as the angle of emission. This is like the way lenses can create apparent images, because they alter the angle of incidence of the light rays from a source on our eyes. \\
 
-\noindent To account for this, we need to re-define the edges of the small angle triangle, and take the expansion of the universe into account. The apparent distance with expansion will be the comoving distance, multiplied by $a$, the scale factor. 
+\noindent To account for this, we need to re-define the edges of the small angle triangle, and take the expansion of the universe into account. The apparent distance with expansion will be the proper distance, multiplied by $a$, the scale factor. 
 \begin{equation}
 \boxed{D_\mathrm{A} = r_\mathrm{com} a = \frac{r_\mathrm{com}}{1+z}}
 \end{equation}
-This is the angular diameter distance, and as with the luminosity distance, getting the it is trivial once you have the comoving distance. \\
+This is the angular diameter distance, and as with the luminosity distance, getting it is trivial once you have the proper distance. \\
 
 \noindent A diagram of the angular diameter distance is shown in the third panel of Figure~\ref{fig:distances}.
 
 \begin{figure*}[h!]
 \hspace*{-2.7cm}
-\includegraphics[width=18cm]{Typesofdistances.pdf}
-\caption{The three types of distances: Comoving distance, luminosity distance and angular diameter distance.}
+\includegraphics[width=18cm]{Types_of_distances.png}
+\caption{The three types of distances: Proper distance, luminosity distance and angular diameter distance.}
 \label{fig:distances}
 \end{figure*}
 
@@ -197,7 +197,7 @@ In other words, the inputs \texttt{plot\_name} and \texttt{redshift\_range} are 
 \label{fig:plot.png}
 \end{figure*}
 
-\noindent The output of this function should be a plot called `plot.png', which will consist of four panels showing the comoving distance, angular diameter distance, luminosity distance and age at redshift $z$. An example of this plot (corresponding to the second input option above) is shown in Figure~\ref{fig:plot.png}. Note the use of log scales for both the x- and y- axes. You may like to add extra features, such as log scales, titles, a legend, manual line colours, manual axis numbers etc (some of these have been utilised in the plot shown here). \texttt{matplotlib} is as simple or as complicated as you want to make it. If there's something about your plot you want to change, try Googling it and see if you can figure out how. \\
+\noindent The output of this function should be a plot called `plot.png', which will consist of four panels showing the proper distance, angular diameter distance, luminosity distance and age at redshift $z$. An example of this plot (corresponding to the second input option above) is shown in Figure~\ref{fig:plot.png}. Note the use of log scales for both the x- and y- axes. You may like to add extra features, such as log scales, titles, a legend, manual line colours, manual axis numbers etc (some of these have been utilised in the plot shown here). \texttt{matplotlib} is as simple or as complicated as you want to make it. If there's something about your plot you want to change, try Googling it and see if you can figure out how. \\
 
 \lstset{frame=tb,
   language=python,
@@ -253,7 +253,7 @@ Note that \texttt{arange} does not include the maximum value in the result, wher
 \end{enumerate}
 Again, Google these things to learn about them (including the list comprehension). 
 
-\item Compute the associated cosmological values for each redshift value. This will require performing two numerical integrals for each redshift value, one for the comoving distance, and one for the age of the universe at that redshift. To perform these integrals I recommend using either \texttt{integrate.quad()} from the module \texttt{scipy} or \texttt{quad()} from the module \texttt{mpmath}. Google them to learn about each, and use the one you like the look of! You will probably need to install the \texttt{mpmath} module to use that integrator. You almost certainly already have the \texttt{numpy} and \texttt{scipy} modules with your python installation, but if not you will need to install them. You can iterate over the redshift values a couple of ways:
+\item Compute the associated cosmological values for each redshift value. This will require performing two numerical integrals for each redshift value, one for the proper distance, and one for the age of the universe at that redshift. To perform these integrals I recommend using either \texttt{integrate.quad()} from the module \texttt{scipy} or \texttt{quad()} from the module \texttt{mpmath}. Google them to learn about each, and use the one you like the look of! You will probably need to install the \texttt{mpmath} module to use that integrator. You almost certainly already have the \texttt{numpy} and \texttt{scipy} modules with your python installation, but if not you will need to install them. You can iterate over the redshift values a couple of ways:
 \begin{enumerate}
 \item With a for loop or a while loop:
 \begin{lstlisting}
@@ -301,7 +301,6 @@ Again, Google these things to learn about them (including the list comprehension
 \end{lstlisting}
 
 \item Or by vectorizing a function with the integral inside it using the \texttt{numpy} function \texttt{vectorize}:
-\item With a list comprehension:
 \begin{lstlisting}
 >>> from scipy import integrate
 >>> import numpy as np
@@ -390,12 +389,12 @@ def an_integrand(redshift_z, omega_m, omega_L):
     return the_val_of_the_integrand_at_redshift_z
 \end{lstlisting}
 
-\item A function to calculate the cosmology for a given set of cosmological parameters. This will contain all the constants (i.e the speed of light and the unit conversions), and will be where you compute the two integrals. You will then use the results of the integrals to compute the comoving distance, angular diameter distance, luminosity distance and age at redshift $z$. This function will look like:
+\item A function to calculate the cosmology for a given set of cosmological parameters. This will contain all the constants (i.e the speed of light and the unit conversions), and will be where you compute the two integrals. You will then use the results of the integrals to compute the proper distance, angular diameter distance, luminosity distance and age at redshift $z$. This function will look like:
 \begin{lstlisting}
 def compute_a_cosmol(redshift_z, hubble_const, omega_m, omega_L):
     # The constants get defined here.
     # You also do the integrals, using the functions we just defined above
-    # You use the results of these integrals to compute comoving distance, angular diameter distance, luminosity distance 	and age at redshift_z
+    # You use the results of these integrals to compute proper distance, angular diameter distance, luminosity distance 	and age at redshift_z
     return D_c, D_A, D_L, age_at_z
 \end{lstlisting}
 
@@ -405,17 +404,17 @@ def compute_all_cosmols(arguments):
     # All the arguments are in `arguments', e.g. H_0 = arguments.hubble_const, Omega_M = arguments.omega_m, max_z, min_z, num_zs = arguments.redshift_range
     # Use the redshift info to make a list or array of redshifts
     # Make some lists or dictionaries to store the results of the calculation for each cosmology
-    # For each cosmology, compute the comoving distance, angular diameter distance, luminosity distance and age for each redshift, storing the result in the appropriate list/array
+    # For each cosmology, compute the proper distance, angular diameter distance, luminosity distance and age for each redshift, storing the result in the appropriate list/array
     return list_of_z_vals, [D_c, D_A, D_L, age_at_z] 
 \end{lstlisting}
 Because of the square brackets around all but the first argument or the return statement, the above function will return two things: a list of redshifts, and a list of lists. Without \texttt{argparse}, this functions can just take the required information as input, e.g \texttt{compute\_all\_cosmols(redshift\_info, H\_0, Omega\_M, Omega\_L)} (remember \texttt{redshift\_info} will be a list of three things: \texttt{max\_z, min\_z and num\_pts}). 
 
-\item A function to plot the results. This will take the name of the output plot image, the list of redshift values the cosmologies were computed for, and the corresponding values of comoving distance, angular diameter distance, luminosity distance and age at redshift $z$ for each cosmology. It's a goo idea to keep all this stuff packed up in lists when you pass it to this function, then unpack it inside the function. This function won't return anything - its job is simply to make a plot and save it. It should look something like:
+\item A function to plot the results. This will take the name of the output plot image, the list of redshift values the cosmologies were computed for, and the corresponding values of proper distance, angular diameter distance, luminosity distance and age at redshift $z$ for each cosmology. It's a goo idea to keep all this stuff packed up in lists when you pass it to this function, then unpack it inside the function. This function won't return anything - its job is simply to make a plot and save it. It should look something like:
 \begin{lstlisting}
 def plot_cosmologies(save_name, list_of_redshifts, list_of_lists_of_cosmologies):
     # Unpack the list_of_lists_of_cosmologies
     # Maka a $4 X 4$ set of axes
-    # Plot the comoving distance, angular diameter distance, luminosity distance and age at redshift_z onto the four axes for each cosmology
+    # Plot the proper distance, angular diameter distance, luminosity distance and age at redshift_z onto the four axes for each cosmology
     # Save the plot to file
     # This function doesn't need a return statement because it doesn't return anything
 \end{lstlisting}
