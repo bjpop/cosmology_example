@@ -34,7 +34,7 @@ def tage_integral(redshift, mass_density, dark_energy_density):
 
 
 def freidman_integral(redshift, mass_density, dark_energy_density):
-    '''Compute the comoving distance'''
+    '''Compute the proper distance'''
     return 1.0 / freidman_equation(redshift, mass_density, dark_energy_density)
 
 
@@ -73,17 +73,17 @@ def cosmo(redshift, hubble_constant,
         integrate.quad(lambda r: tage_integral(r, mass_density, dark_energy_density),
         redshift, np.inf)[0] * Mpc2km / (seconds_in_a_year) / (1.e9)
 
-    comoving_distance = hubble_distance * \
+    proper_distance = hubble_distance * \
         integrate.quad(lambda r: freidman_integral(r, mass_density, dark_energy_density),
         0, redshift)[0]
 
-    # The rest follows from the comoving distance
+    # The rest follows from the proper distance
 
-    luminosity_distance = comoving_distance * (1.0 + redshift)
+    luminosity_distance = proper_distance * (1.0 + redshift)
 
-    angular_diameter_distance = comoving_distance / (1.0 + redshift)
+    angular_diameter_distance = proper_distance / (1.0 + redshift)
 
-    return comoving_distance, luminosity_distance, angular_diameter_distance, age_at_redshift
+    return proper_distance, luminosity_distance, angular_diameter_distance, age_at_redshift
 
 
 def compute_cosmologies(arguments):
@@ -164,7 +164,7 @@ def plot_cosmology(output_filename, z_arr, cosmologies):
     ax1.plot(z_arr, FE_cosm['r'], color='b', linewidth=3, label='Einstein de Sitter')
     ax1.set_yscale('log') # Make the plots logscale
     ax1.set_xscale('log')
-    ax1.set_ylabel('Comoving distance (Mpc)')
+    ax1.set_ylabel('Proper distance (Mpc)')
     ax1.set_xlabel('Redshift, z')
     # increase the space between the y axis ticklabels and the axis label
     ax1.yaxis.labelpad = 20
